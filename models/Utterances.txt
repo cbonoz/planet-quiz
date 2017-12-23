@@ -3,7 +3,18 @@ QuizIntent start a quiz game
 QuizIntent and start a quiz
 QuizIntent and quiz me
 QuizIntent for a quiz
+QuizIntent for a new quiz
 QuizIntent a quiz
+QuizIntent a new quiz
+
+QuizIntent start a challenge
+QuizIntent start a challenge game
+QuizIntent and start a challenge
+QuizIntent and challenge me
+QuizIntent for a challenge
+QuizIntent for a new challenge
+QuizIntent a challenge
+QuizIntent a new challenge
 
 FactIntent for a fact
 FactIntent a fact

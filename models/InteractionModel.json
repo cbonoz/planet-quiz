@@ -1,31 +1,32 @@
 {
   "intents": [
     {
-      "name": "AMAZON.CancelIntent",
+      "intent": "AMAZON.CancelIntent",
       "samples": []
     },
     {
-      "name": "AMAZON.HelpIntent",
+      "intent": "AMAZON.HelpIntent",
       "samples": []
     },
     {
-      "name": "AMAZON.PauseIntent",
+      "intent": "AMAZON.PauseIntent",
       "samples": []
     },
     {
-      "name": "AMAZON.StartOverIntent",
+      "intent": "AMAZON.StartOverIntent",
       "samples": []
     },
     {
-      "name": "AMAZON.StopIntent",
+      "intent": "AMAZON.StopIntent",
       "samples": []
     },
     {
-      "name": "FactIntent",
+      "intent": "FactIntent",
+      "slots": [],
       "samples": []
     },
     {
-      "name": "AnswerIntent",
+      "intent": "AnswerIntent",
       "samples": [],
       "slots": [
         {
@@ -36,8 +37,10 @@
             "false",
             "Earth",
             "Mercury",
+            "Neptune",
             "Mars",
             "Jupiter",
+            "Saturn",
             "Venus",
             "Uranus",
             "The sun",
@@ -47,7 +50,7 @@
       ]
     },
     {
-      "name": "QuizIntent",
+      "intent": "QuizIntent",
       "samples": [
         "start a quiz",
         "start a quiz game",

@@ -1,11 +1,13 @@
 'use strict';
 const Alexa = require('alexa-sdk');
 
+// My libraries.
 const planets = require('./planets');
 
-//Replace with your app ID (OPTIONAL).  You can find this value at the top of your skill's page on http://developer.amazon.com.
-//Make sure to enclose your value in quotes, like this:  const APP_ID = "amzn1.ask.skill.bb4045e6-b3e8-4133-b650-72923c5980f1";
-const APP_ID = undefined;
+// Replace with your app ID (OPTIONAL).  You can find this value at the top of your skill's page on http://developer.amazon.com.
+// Make sure to enclose your value in quotes, like this:  const APP_ID = "amzn1.ask.skill.bb4045e6-b3e8-4133-b650-72923c5980f1";
+const APP_ID = "amzn1.ask.skill.f76c5694-563a-48c5-bfdc-a62e1733be6b";
+const APP_NAME = "Space Challenge";
 
 function getFactDescription(item) {
     return `Here is your fact. ${item}`;
@@ -216,7 +218,7 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         let response = "";
         let speechOutput = "";
 
-        let item = this.attributes["quizitem"];
+        const item = this.attributes["quizitem"];
         let answerOrTrue = this.attributes['answerortrue'].toLowerCase();
 
         let userAnswer = this.event.request.intent.slots.Answer.value;

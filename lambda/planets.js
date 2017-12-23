@@ -22,7 +22,7 @@ const library = (function () {
             "The Earth is the densest planet in the Solar System.",
             "Earth is the only planet not named after a god.",
             "There is only one natural satellite of Earth.",
-            "Earth has a powerful magnetic field. This phenomenon is caused by the nickel-iron core of the planet, coupled with its rapid rotation.        ",
+            "Earth has a powerful magnetic field which is caused by the nickel-iron core of the planet, together with its rapid rotation.",
             "Earth was formed approximately 4.54 billion years ago and is the only known planet to support life.",
         ],
         "Mercury": [
@@ -116,7 +116,6 @@ const library = (function () {
     };
 
     const OBJECTS = new Set(Object.keys(FACTS));
-
     const REGEX = new RegExp(`/${OBJECTS.join("|")}/i`); // match only first occurrence
 
     function isSupportedFactObject(item) {

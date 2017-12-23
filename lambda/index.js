@@ -31,6 +31,8 @@ function getSpeechCon(isCorrect) {
     return `<say-as interpret-as='interjection'>${planets.getRandom(speechConsWrong)} </say-as><break strength='strong'/>`;
 }
 
+const NUM_QUESTIONS = 10;
+
 //This is a list of positive speechcons that this skill will use when a user gets a correct answer.  For a full list of supported
 //speechcons, go here: https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/speechcon-reference
 const speechConsCorrect = ["Booya", "All righty", "Bam", "Bazinga", "Bingo", "Boom", "Bravo", "Cha Ching", "Cheers", "Dynomite",
@@ -46,7 +48,7 @@ const speechConsWrong = ["Argh", "Aw man", "Blarg", "Blast", "Boo", "Bummer", "D
 const WELCOME_MESSAGE = "Welcome to our Solar System Quiz Game!  You can ask me about any of the fifty states and their capitals, or you can ask me to start a quiz.  What would you like to do?";
 
 //This is the message a user will hear when they start a quiz.
-const START_QUIZ_MESSAGE = "OK. I will ask you 10 questions about our Solar System.";
+const START_QUIZ_MESSAGE = `OK. I will ask you ${NUM_QUESTIONS} questions about our Solar System.`;
 
 //This is the message a user will hear when they try to cancel or stop the skill, or when they finish a quiz.
 const EXIT_SKILL_MESSAGE = "Thank you for playing our Solar System Quiz Game!  Let's play again soon!";
@@ -57,6 +59,8 @@ const REPROMPT_SPEECH = "Which other state or capital would you like to know abo
 //This is the message a user will hear when they ask Alexa for help in your skill.
 const HELP_MESSAGE = "I know lots of things about our Solar System.  You can ask me about a planet, the sun, or the moon, and I'll tell you what I know.  You can also test your knowledge by asking me to start a quiz.  What would you like to do?";
 
+// Precedes a true of false question.
+const TRUE_FALSE_MESSAGE = "True or False. ";
 
 //This is the response a user will receive when they ask about something we weren't expecting.  For example, say "pizza" to your
 //skill when it starts.  This is the response you will receive.
@@ -168,7 +172,6 @@ const startHandlers = Alexa.CreateStateHandler(states.START, {
     }
 });
 
-
 const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
     "Quiz": function () {
         this.attributes["response"] = "";
@@ -184,12 +187,21 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         let item = planets.getRandomFact();
 
         // Randomly transform the fact into a false statement.
-        if (Math.random() <= .5) {
-            const correctObject = planets.getFirstMatch(item);
-            item = planets.replaceMatch(fact, correctObject);
-            this.attributes["answerortrue"] = correctObject;
+        if (Math.random() <= .3) {
+            // True or false question.
+            if (Math.random() <= .5) {
+                const correctObject = planets.getFirstMatch(item);
+                item = planets.replaceMatch(fact, correctObject);
+                this.attributes["answerortrue"] = correctObject;
+            } else {
+                this.attributes["answerortrue"] = 'true';
+            }
+            item = `${TRUE_FALSE_MESSAGE} ${item}`;
         } else {
-            this.attributes["answerortrue"] = 'true';
+            // Planet or text answer.
+            const correctObject = planets.getFirstMatch(item);
+            item = planets.replaceMatch(fact, "this planet or body");
+            this.attributes["answerortrue"] = correctObject;
         }
 
         this.attributes["quizitem"] = item;
@@ -203,8 +215,9 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
     "AnswerIntent": function () {
         let response = "";
         let speechOutput = "";
-        const item = this.attributes["quizitem"];
-        const answerOrTrue = this.attributes['answerortrue'];
+
+        let item = this.attributes["quizitem"];
+        let answerOrTrue = this.attributes['answerortrue'].toLowerCase();
 
         let userAnswer = this.event.request.intent.slots.Answer.value;
         console.log('userAnswer', userAnswer);
@@ -213,7 +226,9 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         let correct = false;
         if (userAnswer) {
             userAnswer = userAnswer.toLowerCase();
-            if (userAnswer === answerOrTrue) { // 'true' case
+            answerOrTrue = answerOrTrue.replace(/the|The/g, "");
+            userAnswer = userAnswer.replace(/the|The/g, "");
+            if (userAnswer.indexOf(answerOrTrue) !== -1) { // 'true' case, or answer case.
                 correct = true;
             } else if (userAnswer === 'false' && answerOrTrue !== 'true') { // 'false' case
                 correct = true;
@@ -229,7 +244,7 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
 
         response += getCorrectAnswerSpeech(answerOrTrue);
 
-        if (this.attributes["counter"] < 10) {
+        if (this.attributes["counter"] < NUM_QUESTIONS) {
             response += getCurrentScore(this.attributes["quizscore"], this.attributes["counter"]);
             this.attributes["response"] = response;
             this.emitWithState("AskQuestion");

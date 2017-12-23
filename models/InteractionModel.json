@@ -29,11 +29,19 @@
       "samples": [],
       "slots": [
         {
-          "name": "Boolean",
-          "type": "BOOLEAN",
+          "name": "Answer",
+          "type": "ANSWER",
           "samples": [
             "true",
-            "false"
+            "false",
+            "Earth",
+            "Mercury",
+            "Mars",
+            "Jupiter",
+            "Venus",
+            "Uranus",
+            "The sun",
+            "The moon"
           ]
         }
       ]

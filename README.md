@@ -6,3 +6,5 @@ Educational app for teaching both kids (and adults) facts about the planets, sta
 
 Study for your exam in your free time using these Alexa skills?
 
+
+Facts from: https://space-facts.com/

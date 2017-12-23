@@ -1,0 +1,9 @@
+QuizIntent start a quiz
+QuizIntent start a quiz game
+QuizIntent and start a quiz
+QuizIntent and quiz me
+QuizIntent for a quiz
+QuizIntent a quiz
+
+FactIntent for a fact
+FactIntent a fact

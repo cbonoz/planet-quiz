@@ -1,0 +1,54 @@
+{
+  "intents": [
+    {
+      "name": "AMAZON.CancelIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.HelpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.PauseIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StartOverIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StopIntent",
+      "samples": []
+    },
+    {
+      "name": "FactIntent",
+      "samples": []
+    },
+    {
+      "name": "AnswerIntent",
+      "samples": [],
+      "slots": [
+        {
+          "name": "Boolean",
+          "type": "BOOLEAN",
+          "samples": [
+            "true",
+            "false"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "QuizIntent",
+      "samples": [
+        "start a quiz",
+        "start a quiz game",
+        "and start a quiz",
+        "and quiz me",
+        "for a quiz",
+        "a quiz"
+      ],
+      "slots": []
+    }
+  ]
+}

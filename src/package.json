@@ -1,20 +1,33 @@
 {
-  "name": "StatesQuiz",
+  "name": "spacechallenge",
   "version": "1.0.0",
-  "description": "A quiz about states and their capitals.",
+  "description": "A space challenge app for learning about our solar system and planets",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cbonoz/planet-quiz.git"
+  },
   "keywords": [
+    "space",
+    "challenge",
     "alexa",
+    "app",
+    "fact",
     "skill",
-    "fact"
+    "learning",
+    "education",
+    "kids"
   ],
-  "author": "Amazon.com",
-  "license": "Apache-2.0",
+  "author": "Chris Buonocore",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cbonoz/planet-quiz/issues"
+  },
+  "homepage": "https://github.com/cbonoz/planet-quiz#readme",
   "dependencies": {
-    "alexa-sdk": "^1.0.0",
-    "voice-insights-sdk": "^1.2.2"
+    "alexa-sdk": "^1.0.24"
   }
 }

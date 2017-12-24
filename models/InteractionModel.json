@@ -22,16 +22,10 @@
     },
     {
       "intent": "FactIntent",
-      "slots": [],
-      "samples": []
-    },
-    {
-      "intent": "AnswerIntent",
-      "samples": [],
       "slots": [
         {
-          "name": "Answer",
-          "type": "ANSWER",
+          "name": "Object",
+          "type": "SPACEOBJECT",
           "samples": [
             "true",
             "false",
@@ -43,8 +37,33 @@
             "Saturn",
             "Venus",
             "Uranus",
-            "The sun",
-            "The moon"
+            "The Sun",
+            "The Moon"
+          ]
+        }
+      ],
+      "samples": []
+    },
+    {
+      "intent": "AnswerIntent",
+      "samples": [],
+      "slots": [
+        {
+          "name": "Answer",
+          "type": "SPACEOBJECT",
+          "samples": [
+            "true",
+            "false",
+            "Earth",
+            "Mercury",
+            "Neptune",
+            "Mars",
+            "Jupiter",
+            "Saturn",
+            "Venus",
+            "Uranus",
+            "The Sun",
+            "The Moon"
           ]
         }
       ]

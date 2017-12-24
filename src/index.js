@@ -71,7 +71,27 @@ function getBadAnswer(item) { return "I'm sorry. " + item + " is not something I
 function getCurrentScore(score, counter) { return "Your current score is " + score + " out of " + counter + ". "; }
 
 //This is the message a user will receive after they complete a challenge.  It tells them their final score.
-function getFinalScore(score, counter) { return "Your final score is " + score + " out of " + counter + ". "; }
+function getFinalScore(score, counter) { 
+    function getGrade(score, total) {
+        const percentage = score / total;
+        if (score < .6) {
+            return "not passing yet, try again and improve your score";
+        } else if (score < .7) {
+            return "a D, almost passing";
+        } else if (score < .8) {
+            return "a C, you passed";
+        } else if (score < .9) {
+            return "a B, not bad";
+        } else if (score < 1) {
+            return "an A, you're pretty good at this";
+        } else {
+            return "an A, Perfect score!";
+        }
+    }
+
+    const gradeString = getGrade(score, counter);
+    return `Your final score is ${score} out of ${counter}. That's ${gradeString}.`;
+}
 
 // These next four values are for the Alexa cards that are created when a user asks about one of the data elements.
 // This only happens outside of a challenge.

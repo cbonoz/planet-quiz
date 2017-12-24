@@ -13,7 +13,21 @@ function getFactDescription(object, fact) {
 }
 
 function getQuestion(counter, fact) {
-    return `Here is your ${counter}th question. ${fact}`;
+    function getSuffix(counter) {
+        switch (counter) {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
+    }
+
+    const suffix = getSuffix(counter);
+    return `Here is your ${counter}${suffix} question. ${fact}`;
 }
 
 function getCorrectAnswerSpeech(correctObject) {

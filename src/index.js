@@ -8,12 +8,12 @@ const planets = require('./planets');
 const APP_ID = "amzn1.ask.skill.71d36534-7ccb-41d3-bc60-5ad9a858c281";
 const APP_NAME = "Space Challenge";
 
-function getFactDescription(item) {
-    return `Here is your fact. ${item}`;
+function getFactDescription(object, fact) {
+    return `I know about ${object}, here is a quick fact: ${fact}`;
 }
 
-function getQuestion(counter, item) {
-    return `Here is your ${counter}th question. ${item}`;
+function getQuestion(counter, fact) {
+    return `Here is your ${counter}th question. ${fact}`;
 }
 
 function getCorrectAnswerSpeech(correctObject) {
@@ -46,13 +46,15 @@ const speechConsWrong = ["Argh", "Aw man", "Blarg", "Blast", "Boo", "Bummer", "D
     "Mamma mia", "Oh boy", "Oh dear", "Oof", "Ouch", "Ruh roh", "Shucks", "Uh oh", "Wah wah", "Whoops a daisy", "Yikes"];
 
 //This is the welcome message for when a user starts the skill without a specific intent.
-const WELCOME_MESSAGE = "Welcome to Space Challenge!  You can ask me about any of the planets in our solar system (plus the sun and moon), or you can ask me to start a challenge. What would you like to do?";
+const WELCOME_MESSAGE = "Welcome to Space Challenge!  You can ask me about the planets in our solar system (plus the sun and moon), or you can ask me to start a challenge. What would you like to do?";
 
 //This is the message a user will hear when they start a challenge.
 const START_QUIZ_MESSAGE = `OK. I will ask you ${NUM_QUESTIONS} questions about our Solar System.`;
 
 //This is the message a user will hear when they try to cancel or stop the skill, or when they finish a challenge.
 const EXIT_SKILL_MESSAGE = "Thank you for playing Space Challenge! Let's play again soon!";
+
+const COMPLETE_CHALLENGE_MESSAGE = "Well done. Ask for another challenge to keep learning!";
 
 //This is the message a user will hear after they ask (and hear) about a specific data element.
 const REPROMPT_SPEECH = "Which other planet or body in our solar system would you like to know about?";
@@ -65,7 +67,7 @@ const TRUE_FALSE_MESSAGE = "True or False. ";
 
 //This is the response a user will receive when they ask about something we weren't expecting.  For example, say "pizza" to your
 //skill when it starts.  This is the response you will receive.
-function getBadAnswer(item) { return "I'm sorry. " + item + " is not something I know very much about in this skill. " + HELP_MESSAGE; }
+function getBadAnswer(fact) { return "I'm sorry. " + fact + " is not something I know very much about in this skill. " + HELP_MESSAGE; }
 
 //This is the message a user will receive after each question of a challenge.  It reminds them of their current score.
 function getCurrentScore(score, counter) { return "Your current score is " + score + " out of " + counter + ". "; }
@@ -75,7 +77,7 @@ function getFinalScore(score, counter) {
     function getGrade(score, total) {
         const percentage = score / total;
         if (score < .6) {
-            return "not passing yet, try again and improve your score";
+            return "a good try, but not passing yet, ask for a challenge again and improve your score";
         } else if (score < .7) {
             return "a D, almost passing";
         } else if (score < .8) {
@@ -97,7 +99,7 @@ function getFinalScore(score, counter) {
 // This only happens outside of a challenge.
 
 // If you don't want to use cards in your skill, set the USE_CARDS_FLAG to false.  If you set it to true, you will need an image for each
-// item in your data.
+// fact in your data.
 const USE_CARDS_FLAG = true;
 
 const counter = 0;
@@ -140,23 +142,31 @@ const startHandlers = Alexa.CreateStateHandler(states.START, {
         const slots = this.event.request.intent.slots;
         const object = slots.Object.value;
 
-        if (planets.isSupportedFactObject(object)) {
-            // Say a fact.
-            const item = planets.getRandomFactForObject(object);
-            const factDescription = getFactDescription(item);
-            console.log('factDescription', factDescription);
+        const isSupportedFactObject = planets.isSupportedFactObject(object);
 
-            if (USE_CARDS_FLAG) {
-                // const imageObj = { smallImageUrl: getSmallImage(item), largeImageUrl: getLargeImage(item) };
-                const imageObj = { smallImageUrl: null, largeImageUrl: null };
-
-                this.response.speak(factDescription).listen(REPROMPT_SPEECH);
-                this.response.cardRenderer(`Fact about ${object}`, factDescription, imageObj);
-            } else {
-                this.response.speak(factDescription).listen(REPROMPT_SPEECH);
-            }
+        let fact = "";
+        if (!object || object === '') {
+            fact = planets.getRandomFact();
+        } else if (isSupportedFactObject) {
+            fact = planets.getRandomFactForObject(object);
         } else {
-            this.response.speak(getBadAnswer(item)).listen(getBadAnswer(item));
+            // object is defined, but did not match any support object (planet or body) in the fact set.
+            this.response.speak(getBadAnswer(fact)).listen(getBadAnswer(fact));
+            this.emit(":responseReady");
+            return;
+        }
+
+        const factDescription = getFactDescription(object, fact);
+        console.log('factDescription', factDescription);
+
+        if (USE_CARDS_FLAG) {
+            // const imageObj = { smallImageUrl: getSmallImage(fact), largeImageUrl: getLargeImage(fact) };
+            const imageObj = { smallImageUrl: null, largeImageUrl: null };
+
+            this.response.speak(factDescription).listen(REPROMPT_SPEECH);
+            this.response.cardRenderer(`Fact about ${object}`, factDescription, imageObj);
+        } else {
+            this.response.speak(factDescription).listen(REPROMPT_SPEECH);
         }
 
         this.emit(":responseReady");
@@ -198,30 +208,30 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
             this.attributes["response"] = START_QUIZ_MESSAGE + " ";
         }
 
-        let item = planets.getRandomFact();
+        let fact = planets.getRandomFact();
 
         // Randomly transform the fact into a false statement.
         if (Math.random() <= .3) {
             // True or false question.
             if (Math.random() <= .5) {
-                const correctObject = planets.getFirstMatch(item);
-                item = planets.replaceMatch(item, correctObject);
+                const correctObject = planets.getFirstMatch(fact);
+                fact = planets.replaceMatch(fact, correctObject);
                 this.attributes["answerortrue"] = correctObject;
             } else {
                 this.attributes["answerortrue"] = 'true';
             }
-            item = `${TRUE_FALSE_MESSAGE} ${item}`;
+            fact = `${TRUE_FALSE_MESSAGE} ${fact}`;
         } else {
             // Planet or text answer.
-            const correctObject = planets.getFirstMatch(item);
-            item = planets.replaceMatch(fact, "this planet or body");
+            const correctObject = planets.getFirstMatch(fact);
+            fact = planets.replaceMatch(fact, "this planet or body");
             this.attributes["answerortrue"] = correctObject;
         }
 
-        this.attributes["quizitem"] = item;
+        this.attributes["quizitem"] = fact;
         this.attributes["counter"]++;
 
-        const question = getQuestion(this.attributes["counter"], item);
+        const question = getQuestion(this.attributes["counter"], fact);
         let speech = this.attributes["response"] + question;
 
         this.emit(":ask", speech, question);
@@ -230,7 +240,7 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         let response = "";
         let speechOutput = "";
 
-        const item = this.attributes["quizitem"];
+        const fact = this.attributes["quizitem"];
         let answerOrTrue = this.attributes['answerortrue'].toLowerCase();
 
         let userAnswer = this.event.request.intent.slots.Answer.value;
@@ -265,7 +275,7 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         }
         else {
             response += getFinalScore(this.attributes["quizscore"], this.attributes["counter"]);
-            speechOutput = response + " " + EXIT_SKILL_MESSAGE;
+            speechOutput = response + " " + COMPLETE_CHALLENGE_MESSAGE;
             this.response.speak(speechOutput);
             this.emit(":responseReady");
         }

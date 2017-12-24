@@ -1,7 +1,7 @@
 {
-  "name": "spacechallenge",
+  "name": "spacequiz",
   "version": "1.0.0",
-  "description": "A space challenge app for learning about our solar system and planets",
+  "description": "Space quiz is an alexa app for learning about our solar system and planets.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,7 +12,8 @@
   },
   "keywords": [
     "space",
-    "challenge",
+    "planets",
+    "quiz",
     "alexa",
     "app",
     "fact",

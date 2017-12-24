@@ -1,6 +1,6 @@
 const library = (function () {
-    const getRandom = (items) => {
-        return items[Math.floor(Math.random() * items.length)];
+    const getRandom = (facts) => {
+        return facts[Math.floor(Math.random() * facts.length)];
     }
 
     const formatDateTimeMs = (timeMs) => {
@@ -119,8 +119,8 @@ const library = (function () {
     const OBJECTS = Object.keys(FACTS);
     const REGEX = new RegExp(`/${OBJECTS.join("|")}/`, 'i'); // match only first occurrence, case insensitive.
 
-    function isSupportedFactObject(item) {
-        return OBJECTS.has(item.toTitleCase());
+    function isSupportedFactObject(object) {
+        return OBJECTS.has(object.toTitleCase());
     }
 
     function getRandomFactForObject(object) {

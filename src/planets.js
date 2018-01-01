@@ -120,7 +120,7 @@ const library = (function () {
     const REGEX = new RegExp(`/${OBJECTS.join("|")}/`, 'i'); // match only first occurrence, case insensitive.
 
     function isSupportedFactObject(object) {
-        return OBJECTS.has(object.toTitleCase());
+        return OBJECTS.hasOwnProperty(toTitleCase(object));
     }
 
     function getRandomFactForObject(object) {
@@ -155,6 +155,7 @@ const library = (function () {
         getRandomFactForObject: getRandomFactForObject,
         getFirstMatch: getFirstMatch,
         replaceMatch: replaceMatch,
+        toTitleCase: toTitleCase,
         isSupportedFactObject: isSupportedFactObject,
         formatDateTimeMs: formatDateTimeMs,
         FACTS: FACTS,

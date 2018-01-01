@@ -10,8 +10,13 @@ QuizIntent a new quiz
 AnswerIntent {Answer}
 
 FactIntent for a fact 
+FactIntent tell me about {Object}
 FactIntent a fact
-
+FactIntent fact about the {Object}
+FactIntent give me a fact
+FactIntent tell me a fact
+FactIntent give me a fact about the {Object}
+FactIntent tell me a fact about the {Object}
 FactIntent for a fact about {Object}
 FactIntent for a fact on {Object}
 FactIntent a {Object} fact

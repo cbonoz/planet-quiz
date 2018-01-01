@@ -60,21 +60,21 @@ const speechConsWrong = ["Argh", "Aw man", "Blarg", "Blast", "Boo", "Bummer", "D
     "Mamma mia", "Oh boy", "Oh dear", "Oof", "Ouch", "Ruh roh", "Shucks", "Uh oh", "Wah wah", "Whoops a daisy", "Yikes"];
 
 //This is the welcome message for when a user starts the skill without a specific intent.
-const WELCOME_MESSAGE = `Welcome to ${APP_NAME}!  You can ask me about the planets in our solar system (plus the sun and moon), or you can ask me to start a challenge. What would you like to do?`;
+const WELCOME_MESSAGE = `Welcome to ${APP_NAME}!  You can ask me about the planets in our solar system (plus the sun and moon), or say 'start quiz'. What would you like to do?`;
 
-//This is the message a user will hear when they start a challenge.
+//This is the message a user will hear when they start a quiz.
 const START_QUIZ_MESSAGE = `OK. I will ask you ${NUM_QUESTIONS} questions about our Solar System.`;
 
-//This is the message a user will hear when they try to cancel or stop the skill, or when they finish a challenge.
+//This is the message a user will hear when they try to cancel or stop the skill, or when they finish a quiz.
 const EXIT_SKILL_MESSAGE = `Thank you for playing ${APP_NAME}! Let's play again soon!`;
 
-const COMPLETE_CHALLENGE_MESSAGE = "Well done. Ask for another challenge to keep learning!";
+const COMPLETE_QUIZ_MESSAGE = "Well done. Ask for another quiz to keep learning!";
 
 //This is the message a user will hear after they ask (and hear) about a specific data element.
 const REPROMPT_SPEECH = "Which other planet or body in our solar system would you like to know about?";
 
 //This is the message a user will hear when they ask Alexa for help in your skill.
-const HELP_MESSAGE = "I know lots of things about our Solar System. You can ask me about a planet, the sun, or the moon, and I'll tell you what I know.  You can also test your knowledge by asking me to start a challenge.  What would you like to do?";
+const HELP_MESSAGE = "I know lots of things about our Solar System. You can ask me about a planet, the sun, or the moon, and I'll tell you what I know.  You can also test your knowledge by asking me to start a quiz.  What would you like to do?";
 
 // Precedes a true of false question.
 const TRUE_FALSE_MESSAGE = "True or False. ";
@@ -83,15 +83,15 @@ const TRUE_FALSE_MESSAGE = "True or False. ";
 //skill when it starts.  This is the response you will receive.
 function getBadAnswer(fact) { return "I'm sorry. " + fact + " is not something I know very much about in this skill. " + HELP_MESSAGE; }
 
-//This is the message a user will receive after each question of a challenge.  It reminds them of their current score.
+//This is the message a user will receive after each question of a quiz.  It reminds them of their current score.
 function getCurrentScore(score, counter) { return "Your current score is " + score + " out of " + counter + ". "; }
 
-//This is the message a user will receive after they complete a challenge.  It tells them their final score.
+//This is the message a user will receive after they complete a quiz.  It tells them their final score.
 function getFinalScore(score, counter) { 
     function getGrade(score, total) {
         const percentage = score / total;
         if (score < .6) {
-            return "a good try, but not passing yet, ask for a challenge again and improve your score";
+            return "a good try, but not passing yet, ask for a quizg again and improve your score";
         } else if (score < .7) {
             return "a D, almost passing";
         } else if (score < .8) {
@@ -154,7 +154,7 @@ const startHandlers = Alexa.CreateStateHandler(states.START, {
     },
     "FactIntent": function () {
         const slots = this.event.request.intent.slots;
-        const object = slots.Object.value;
+        const object = planets.toTitleCase(slots.Object.value);
 
         const isSupportedFactObject = planets.isSupportedFactObject(object);
 
@@ -165,7 +165,8 @@ const startHandlers = Alexa.CreateStateHandler(states.START, {
             fact = planets.getRandomFactForObject(object);
         } else {
             // object is defined, but did not match any support object (planet or body) in the fact set.
-            this.response.speak(getBadAnswer(fact)).listen(getBadAnswer(fact));
+            const resp = getBadAnswer(object);
+            this.response.speak(resp).listen(resp);
             this.emit(":responseReady");
             return;
         }
@@ -289,7 +290,7 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         }
         else {
             response += getFinalScore(this.attributes["quizscore"], this.attributes["counter"]);
-            speechOutput = response + " " + COMPLETE_CHALLENGE_MESSAGE;
+            speechOutput = response + " " + COMPLETE_QUIZ_MESSAGE;
             this.response.speak(speechOutput);
             this.emit(":responseReady");
         }

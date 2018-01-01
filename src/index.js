@@ -6,7 +6,7 @@ const planets = require('./planets');
 
 // Enclose your app id value in quotes, like this:  const APP_ID = "amzn1.ask.skill.bb4045e6-b3e8-4133-b650-72923c5980f1";
 const APP_ID = "amzn1.ask.skill.71d36534-7ccb-41d3-bc60-5ad9a858c281";
-const APP_NAME = "Space Challenge";
+const APP_NAME = "Space Brain";
 
 function getFactDescription(object, fact) {
     return `I know about ${object}, here is a quick fact: ${fact}`;
@@ -60,13 +60,13 @@ const speechConsWrong = ["Argh", "Aw man", "Blarg", "Blast", "Boo", "Bummer", "D
     "Mamma mia", "Oh boy", "Oh dear", "Oof", "Ouch", "Ruh roh", "Shucks", "Uh oh", "Wah wah", "Whoops a daisy", "Yikes"];
 
 //This is the welcome message for when a user starts the skill without a specific intent.
-const WELCOME_MESSAGE = "Welcome to Space Challenge!  You can ask me about the planets in our solar system (plus the sun and moon), or you can ask me to start a challenge. What would you like to do?";
+const WELCOME_MESSAGE = "Welcome to Space Brain!  You can ask me about the planets in our solar system (plus the sun and moon), or you can ask me to start a challenge. What would you like to do?";
 
 //This is the message a user will hear when they start a challenge.
 const START_QUIZ_MESSAGE = `OK. I will ask you ${NUM_QUESTIONS} questions about our Solar System.`;
 
 //This is the message a user will hear when they try to cancel or stop the skill, or when they finish a challenge.
-const EXIT_SKILL_MESSAGE = "Thank you for playing Space Challenge! Let's play again soon!";
+const EXIT_SKILL_MESSAGE = "Thank you for playing Space Brain! Let's play again soon!";
 
 const COMPLETE_CHALLENGE_MESSAGE = "Well done. Ask for another challenge to keep learning!";
 

@@ -1,7 +1,7 @@
 {
   "name": "spacequiz",
   "version": "1.0.0",
-  "description": "Space quiz is an alexa app for learning about our solar system and planets.",
+  "description": "Space Brain is an alexa app for learning about our solar system and planets.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

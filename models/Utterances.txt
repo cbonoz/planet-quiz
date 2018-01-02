@@ -6,6 +6,8 @@ QuizIntent for a quiz
 QuizIntent for a new quiz
 QuizIntent a quiz
 QuizIntent a new quiz
+QuizIntent new quiz
+
 
 AnswerIntent {Answer}
 

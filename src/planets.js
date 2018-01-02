@@ -13,7 +13,10 @@ const library = (function () {
     }
 
     function toTitleCase(str) {
-        return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
+        if (str) {
+            return str.replace(/\w\S*/g, function (txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); });
+        }
+        return str
     }
 
     // Detailed
@@ -117,10 +120,10 @@ const library = (function () {
     };
 
     const OBJECTS = Object.keys(FACTS);
-    const REGEX = new RegExp(`/${OBJECTS.join("|")}/`, 'i'); // match only first occurrence, case insensitive.
+    const REGEX = new RegExp(OBJECTS.join("|"), 'i'); // match only first occurrence, case insensitive.
 
     function isSupportedFactObject(object) {
-        return OBJECTS.hasOwnProperty(toTitleCase(object));
+        return FACTS.hasOwnProperty(object);
     }
 
     function getRandomFactForObject(object) {
@@ -136,15 +139,23 @@ const library = (function () {
     function getFirstMatch(fact) {
         const matched = fact.match(REGEX);
         console.log('matched', matched, REGEX)
+        if (matched && matched instanceof Array) {
+            return matched[0];
+        }
         return matched;
     }
 
-    function replaceMatch(fact, matched) {
+    function replaceMatchWithRandomObject(fact, matched) {
         let newObject = matched;
         while (matched === newObject || fact.indexOf(newObject) !== -1) {
             newObject = getRandom(OBJECTS);
         }
         const res = fact.replace(matched, newObject);
+        return res;
+    }
+
+    function replaceMatchWithText(fact, matched, text) {
+        const res = fact.replace(matched, text);
         return res;
     }
 
@@ -154,7 +165,8 @@ const library = (function () {
         getRandomFact: getRandomFact,
         getRandomFactForObject: getRandomFactForObject,
         getFirstMatch: getFirstMatch,
-        replaceMatch: replaceMatch,
+        replaceMatchWithRandomObject: replaceMatchWithRandomObject,
+        replaceMatchWithText: replaceMatchWithText,
         toTitleCase: toTitleCase,
         isSupportedFactObject: isSupportedFactObject,
         formatDateTimeMs: formatDateTimeMs,

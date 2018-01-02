@@ -31,11 +31,11 @@ function getQuestion(counter, fact) {
 }
 
 function getCorrectAnswerSpeech(correctObject) {
-    return `This is true for ${correctObject}.`;
+    return `This is true for ${correctObject}. `;
 }
 
 function getRandomSymbolSpeech(symbol) {
-    return `<say-as interpret-as='spell-out'>${symbol} </say-as>`;
+    return `<say-as interpret-as='spell-out'>${symbol} </say-as> `;
 }
 
 function getSpeechCon(isCorrect) {
@@ -68,13 +68,13 @@ const START_QUIZ_MESSAGE = `OK. I will ask you ${NUM_QUESTIONS} questions about 
 //This is the message a user will hear when they try to cancel or stop the skill, or when they finish a quiz.
 const EXIT_SKILL_MESSAGE = `Thank you for playing ${APP_NAME}! Let's play again soon!`;
 
-const COMPLETE_QUIZ_MESSAGE = "Well done. Ask for another quiz to keep learning!";
+const COMPLETE_QUIZ_MESSAGE = "Ask for another quiz to keep learning!";
 
 //This is the message a user will hear after they ask (and hear) about a specific data element.
 const REPROMPT_SPEECH = "Which other planet or body in our solar system would you like to know about?";
 
 //This is the message a user will hear when they ask Alexa for help in your skill.
-const HELP_MESSAGE = "I know lots of things about our Solar System. You can ask me about a planet, the sun, or the moon, and I'll tell you what I know.  You can also test your knowledge by asking me to start a quiz.  What would you like to do?";
+const HELP_MESSAGE = "You can ask me about a planet, the sun, or the moon, and I'll tell you what I know.  You can also test your knowledge by asking me to start a quiz.  What would you like to do?";
 
 // Precedes a true of false question.
 const TRUE_FALSE_MESSAGE = "True or False. ";
@@ -87,26 +87,26 @@ function getBadAnswer(fact) { return "I'm sorry. " + fact + " is not something I
 function getCurrentScore(score, counter) { return "Your current score is " + score + " out of " + counter + ". "; }
 
 //This is the message a user will receive after they complete a quiz.  It tells them their final score.
-function getFinalScore(score, counter) { 
+function getFinalScore(yourScore, possibleScore) { 
     function getGrade(score, total) {
         const percentage = score / total;
-        if (score < .6) {
-            return "a good try, but not passing yet, ask for a quizg again and improve your score";
-        } else if (score < .7) {
+        if (percentage < .6) {
+            return "a good try, but not passing yet, try again and improve your score";
+        } else if (percentage < .7) {
             return "a D, almost passing";
-        } else if (score < .8) {
+        } else if (percentage < .8) {
             return "a C, you passed";
-        } else if (score < .9) {
+        } else if (percentage < .9) {
             return "a B, not bad";
-        } else if (score < 1) {
+        } else if (percentage < 1.0) {
             return "an A, you're pretty good at this";
         } else {
             return "an A, Perfect score!";
         }
     }
 
-    const gradeString = getGrade(score, counter);
-    return `Your final score is ${score} out of ${counter}. That's ${gradeString}.`;
+    const gradeString = getGrade(yourScore, possibleScore);
+    return `Your final score is ${yourScore} out of ${possibleScore}. That's ${gradeString}.`;
 }
 
 // These next four values are for the Alexa cards that are created when a user asks about one of the data elements.
@@ -154,8 +154,7 @@ const startHandlers = Alexa.CreateStateHandler(states.START, {
     },
     "FactIntent": function () {
         const slots = this.event.request.intent.slots;
-        const object = planets.toTitleCase(slots.Object.value);
-
+        let object = planets.toTitleCase(slots.Object.value);
         const isSupportedFactObject = planets.isSupportedFactObject(object);
 
         let fact = "";
@@ -169,6 +168,10 @@ const startHandlers = Alexa.CreateStateHandler(states.START, {
             this.response.speak(resp).listen(resp);
             this.emit(":responseReady");
             return;
+        }
+
+        if (!object) {
+            object = planets.getFirstMatch(fact);
         }
 
         const factDescription = getFactDescription(object, fact);
@@ -229,17 +232,19 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         if (Math.random() <= .3) {
             // True or false question.
             if (Math.random() <= .5) {
+                // False case, with a different planet replaced.
                 const correctObject = planets.getFirstMatch(fact);
-                fact = planets.replaceMatch(fact, correctObject);
+                fact = planets.replaceMatchWithRandomObject(fact, correctObject);
                 this.attributes["answerortrue"] = correctObject;
             } else {
+                // True case.
                 this.attributes["answerortrue"] = 'true';
             }
             fact = `${TRUE_FALSE_MESSAGE} ${fact}`;
         } else {
             // Planet or text answer.
             const correctObject = planets.getFirstMatch(fact);
-            fact = planets.replaceMatch(fact, "this planet or body");
+            fact = planets.replaceMatchWithText(fact, correctObject, "BLANK");
             this.attributes["answerortrue"] = correctObject;
         }
 
@@ -255,19 +260,19 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
         let response = "";
         let speechOutput = "";
 
-        const fact = this.attributes["quizitem"];
-        let answerOrTrue = this.attributes['answerortrue'].toLowerCase();
-
         let userAnswer = this.event.request.intent.slots.Answer.value;
-        console.log('userAnswer', userAnswer);
+        let answerOrTrue = this.attributes['answerortrue'] 
+        let fact = this.attributes["quizitem"];
+        console.log(fact, answerOrTrue, userAnswer);
 
         // Validate the user answer.
         let correct = false;
-        if (userAnswer) {
+        if (userAnswer && answerOrTrue) {
+            answerOrTrue = answerOrTrue.toLowerCase();
             userAnswer = userAnswer.toLowerCase();
-            answerOrTrue = answerOrTrue.replace(/the|The/g, "");
+            const strippedAnswerOrTrue = answerOrTrue.replace(/the|The/g, "");
             userAnswer = userAnswer.replace(/the|The/g, "");
-            if (userAnswer.indexOf(answerOrTrue) !== -1) { // 'true' case, or answer case.
+            if (userAnswer.indexOf(strippedAnswerOrTrue) !== -1) { // 'true' case, or answer case.
                 correct = true;
             } else if (userAnswer === 'false' && answerOrTrue !== 'true') { // 'false' case
                 correct = true;
@@ -278,17 +283,16 @@ const quizHandlers = Alexa.CreateStateHandler(states.QUIZ, {
             response = getSpeechCon(true);
             this.attributes["quizscore"]++;
         } else {
+            // Incorrect response.
             response = getSpeechCon(false);
+            response += getCorrectAnswerSpeech(answerOrTrue);
         }
-
-        response += getCorrectAnswerSpeech(answerOrTrue);
 
         if (this.attributes["counter"] < NUM_QUESTIONS) {
             response += getCurrentScore(this.attributes["quizscore"], this.attributes["counter"]);
             this.attributes["response"] = response;
             this.emitWithState("AskQuestion");
-        }
-        else {
+        } else {
             response += getFinalScore(this.attributes["quizscore"], this.attributes["counter"]);
             speechOutput = response + " " + COMPLETE_QUIZ_MESSAGE;
             this.response.speak(speechOutput);

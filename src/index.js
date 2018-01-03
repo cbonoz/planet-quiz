@@ -137,6 +137,10 @@ const handlers = {
         this.handler.state = states.START;
         this.emitWithState("AnswerIntent");
     },
+    "FactIntent": function () {
+        this.handler.state = states.START;
+        this.emitWithState("FactIntent");
+    },
     "AMAZON.HelpIntent": function () {
         this.response.speak(HELP_MESSAGE).listen(HELP_MESSAGE);
         this.emit(":responseReady");
@@ -181,10 +185,10 @@ const startHandlers = Alexa.CreateStateHandler(states.START, {
             // const imageObj = { smallImageUrl: getSmallImage(fact), largeImageUrl: getLargeImage(fact) };
             const imageObj = { smallImageUrl: null, largeImageUrl: null };
 
-            this.response.speak(factDescription).listen(REPROMPT_SPEECH);
+            this.response.speak(factDescription); // .listen(REPROMPT_SPEECH); // shouldEndSession gets set to true with listen.
             this.response.cardRenderer(`Fact about ${object}`, factDescription, imageObj);
         } else {
-            this.response.speak(factDescription).listen(REPROMPT_SPEECH);
+            this.response.speak(factDescription); // .listen(REPROMPT_SPEECH);
         }
 
         this.emit(":responseReady");

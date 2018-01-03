@@ -8,7 +8,6 @@ QuizIntent a quiz
 QuizIntent a new quiz
 QuizIntent new quiz
 
-
 AnswerIntent {Answer}
 
 FactIntent for a fact 
